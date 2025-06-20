@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual Environments
+env/
+.venv/
+venv/
+
+# Environment variables
+.env
+.env.*
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Migrations (optional — only ignore if you don't want to track them)
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# VSCode and IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Byte-compiled or packaged files
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# pytest
+.cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Celery
+celerybeat-schedule
