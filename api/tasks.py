@@ -1,5 +1,8 @@
+import redis
 from celery import shared_task
 from .models import Word, Language, User
+
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 @shared_task
 def save_word_task(text, definition, language_code, user_id, sentences=None, translations=None):

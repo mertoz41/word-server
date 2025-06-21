@@ -1,5 +1,5 @@
 import os
-import openai
+from openai import OpenAI
 import json
 import graphene
 from django.contrib.auth.hashers import make_password
@@ -8,11 +8,14 @@ from .tasks import save_word_task
 from .types import UserType, WordType
 from graphql_jwt.utils import jwt_encode, jwt_payload
 from .utils.openai_utils import build_openai_prompt
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) 
 
 class CreateWord(graphene.Mutation):
     word = graphene.Field(WordType)
-    openai_response = graphene.String()
+    definition = graphene.String()
+    sentences = graphene.List(graphene.String)
+    translations = graphene.JSONString() 
 
     class Arguments:
         text = graphene.String(required=True)
@@ -39,16 +42,16 @@ class CreateWord(graphene.Mutation):
 
         if existing_word:
             # Word exists — return it immediately without calling OpenAI
-            return CreateWord(word=existing_word, openai_response=None)
+            return CreateWord(word=existing_word)
 
         # Word does NOT exist — call OpenAI to generate data
         prompt = build_openai_prompt(text, language_code, translations)
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=500,
         )
-        openai_text = response['choices'][0]['message']['content'].strip()
+        openai_text = response.choices[0].message.content.strip()
 
     # Parse JSON response safely
         try:
@@ -56,12 +59,12 @@ class CreateWord(graphene.Mutation):
         except json.JSONDecodeError:
             raise Exception("Failed to parse OpenAI response JSON.")
 
-        definition = openai_data.get("definition", "")
+        definition = openai_data.get("definition", '')
         sentences = openai_data.get("sentences", [])
         translations_data = openai_data.get("translations", {})
         
         save_word_task.delay(text, definition, language_code, user_id, sentences, translations_data)
-        return CreateWord(word=None, openai_response=openai_text)
+        return CreateWord(word=None, definition=definition, sentences=sentences, translations=translations_data)
    
     
 
