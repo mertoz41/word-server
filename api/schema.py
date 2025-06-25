@@ -2,6 +2,7 @@ import graphene
 from .mutations import CreateUser, CreateWord
 import graphql_jwt
 from .queries import UserQuery, WordQuery, LanguageQuery
+
 class Query(UserQuery, LanguageQuery, WordQuery, graphene.ObjectType):
     pass
  

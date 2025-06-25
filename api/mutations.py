@@ -8,6 +8,7 @@ from .tasks import save_word_task
 from .types import UserType, WordType
 from graphql_jwt.utils import jwt_encode, jwt_payload
 from .utils.openai_utils import build_openai_prompt
+from graphene.types.generic import GenericScalar
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) 
 
@@ -15,8 +16,8 @@ class CreateWord(graphene.Mutation):
     word = graphene.Field(WordType)
     definition = graphene.String()
     sentences = graphene.List(graphene.String)
-    translations = graphene.JSONString() 
-
+    translations = GenericScalar()
+ 
     class Arguments:
         text = graphene.String(required=True)
         language_code = graphene.String(required=True)
@@ -52,7 +53,6 @@ class CreateWord(graphene.Mutation):
             max_tokens=500,
         )
         openai_text = response.choices[0].message.content.strip()
-
     # Parse JSON response safely
         try:
             openai_data = json.loads(openai_text)

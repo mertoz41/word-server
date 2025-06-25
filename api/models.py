@@ -4,7 +4,8 @@ from django.db import models
 # Create your models here.
 
 class User(AbstractUser):
-    pass
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
 class Language(models.Model):
@@ -19,7 +20,7 @@ class Word(models.Model):
     definition = models.TextField()
     user = models.ForeignKey('api.User', on_delete=models.CASCADE, related_name="words")
     language = models.ForeignKey('api.Language', on_delete=models.CASCADE, related_name="words")
-
+    created_at = models.DateTimeField(auto_now_add=True)
     sentences = models.JSONField(blank=True, null=True)
     translations = models.JSONField(blank=True, null=True)
 
