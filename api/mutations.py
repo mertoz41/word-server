@@ -9,7 +9,7 @@ from .types import UserType, WordType
 from graphql_jwt.utils import jwt_encode, jwt_payload
 from .utils.openai_utils import build_openai_prompt
 from graphene.types.generic import GenericScalar
-
+from django.contrib.auth import authenticate
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY")) 
 
 class CreateWord(graphene.Mutation):
@@ -95,5 +95,22 @@ class CreateUser(graphene.Mutation):
         token = jwt_encode(payload)
         return CreateUser(user=user, token=token)
     
+class LoginUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+    token = graphene.String()
+
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+
+    def mutate(self, info, username, password):
+        user = authenticate(username=username, password=password)
+        if not user:
+            raise Exception('Invalid username or password')
+        
+        payload = jwt_payload(user)
+        token = jwt_encode(payload)
+        return LoginUser(user=user, token=token)
 
 
