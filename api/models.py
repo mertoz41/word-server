@@ -5,6 +5,7 @@ from django.db import models
 
 class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
+    points = models.IntegerField(default=0)
 
 
 

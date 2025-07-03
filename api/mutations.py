@@ -17,7 +17,7 @@ class CreateWord(graphene.Mutation):
     definition = graphene.String()
     sentences = graphene.List(graphene.String)
     translations = GenericScalar()
- 
+    awarded_points = graphene.Int()
     class Arguments:
         text = graphene.String(required=True)
         language_code = graphene.String(required=True)
@@ -62,9 +62,11 @@ class CreateWord(graphene.Mutation):
         definition = openai_data.get("definition", '')
         sentences = openai_data.get("sentences", [])
         translations_data = openai_data.get("translations", {})
-        
+        user.points += 5
+        user.save()
+        awarded_points = 5
         save_word_task.delay(text, definition, language_code, user_id, sentences, translations_data)
-        return CreateWord(word=None, definition=definition, sentences=sentences, translations=translations_data)
+        return CreateWord(word=None, definition=definition, sentences=sentences, translations=translations_data, awarded_points=awarded_points)
    
     
 
