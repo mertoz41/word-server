@@ -23,10 +23,10 @@ class LanguageQuery(graphene.ObjectType):
         return Language.objects.all()
     
 class WordQuery(graphene.ObjectType):
-    all_words = graphene.List(WordType, language_code=graphene.String(required=False))
+    previous_words = graphene.List(WordType, language_code=graphene.String(required=False))
     word_by_text = graphene.Field(WordType, text=graphene.String(required=True))
 
-    def resolve_all_words(self, info, language_code, **kwargs):
+    def resolve_previous_words(self, info, language_code, **kwargs):
         qs = Word.objects.all()
 
         if language_code is not None:
