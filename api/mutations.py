@@ -20,11 +20,12 @@ class CreateWord(graphene.Mutation):
     awarded_points = graphene.Int()
     class Arguments:
         text = graphene.String(required=True)
+        slug = graphene.String(required=True)
         language_code = graphene.String(required=True)
         user_id = graphene.ID(required=True)
         translations = graphene.List(graphene.String, required=False)
 
-    def mutate(self, info, text, language_code, user_id, translations=None):
+    def mutate(self, info, text, slug, language_code, user_id, translations=None):
         # Call OpenAI API synchronously
         translations = translations or []
         try:

@@ -18,6 +18,7 @@ class Language(models.Model):
 
 class Word(models.Model):
     text = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50, default='exp')
     definition = models.TextField()
     user = models.ForeignKey('api.User', on_delete=models.CASCADE, related_name="words")
     language = models.ForeignKey('api.Language', on_delete=models.CASCADE, related_name="words")
